@@ -11,7 +11,9 @@ namespace HIFURexTweaks
 
         public T ConfigOption<T>(T value, string name, string description)
         {
-            return Main.HRTConfig.Bind<T>(Name, name, value, description).Value;
+            var config = Main.HRTConfig.Bind<T>(Name, name, value, description);
+            ConfigManager.HandleConfig<T>(config, Main.HRTBackupConfig, name);
+            return config.Value;
         }
 
         public abstract void Hooks();

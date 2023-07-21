@@ -1,6 +1,7 @@
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using HarmonyLib;
 using R2API;
 using R2API.ContentManagement;
 using System;
@@ -21,15 +22,35 @@ namespace HIFURexTweaks
 
         public const string PluginAuthor = "HIFU";
         public const string PluginName = "HIFURexTweaks";
-        public const string PluginVersion = "1.2.7";
+        public const string PluginVersion = "1.2.8";
 
         public static ConfigFile HRTConfig;
+        public static ConfigFile HRTBackupConfig;
+
+        public static ConfigEntry<bool> enableAutoConfig { get; set; }
+        public static ConfigEntry<string> latestVersion { get; set; }
+
         public static ManualLogSource HRTLogger;
+
+        public static bool _preVersioning = false;
 
         public void Awake()
         {
             HRTLogger = Logger;
             HRTConfig = Config;
+
+            HRTBackupConfig = new(Paths.ConfigPath + "\\" + PluginAuthor + "." + PluginName + ".Backup.cfg", true);
+            HRTBackupConfig.Bind(": DO NOT MODIFY THIS FILES CONTENTS :", ": DO NOT MODIFY THIS FILES CONTENTS :", ": DO NOT MODIFY THIS FILES CONTENTS :", ": DO NOT MODIFY THIS FILES CONTENTS :");
+
+            enableAutoConfig = HRTConfig.Bind("Config", "Enable Auto Config Sync", true, "Disabling this would stop HIFURexTweaks from syncing config whenever a new version is found.");
+            _preVersioning = !((Dictionary<ConfigDefinition, string>)AccessTools.DeclaredPropertyGetter(typeof(ConfigFile), "OrphanedEntries").Invoke(HRTConfig, null)).Keys.Any(x => x.Key == "Latest Version");
+            latestVersion = HRTConfig.Bind("Config", "Latest Version", PluginVersion, "DO NOT CHANGE THIS");
+            if (enableAutoConfig.Value && (_preVersioning || (latestVersion.Value != PluginVersion)))
+            {
+                latestVersion.Value = PluginVersion;
+                ConfigManager.VersionChanged = true;
+                HRTLogger.LogInfo("Config Autosync Enabled.");
+            }
 
             IEnumerable<Type> enumerable = from type in Assembly.GetExecutingAssembly().GetTypes()
                                            where !type.IsAbstract && type.IsSubclassOf(typeof(TweakBase))
