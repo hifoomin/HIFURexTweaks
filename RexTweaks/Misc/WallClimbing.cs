@@ -14,18 +14,21 @@ namespace HIFURexTweaks.Misc
 
         public override void Hooks()
         {
-            CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
+            On.RoR2.CharacterMotor.GenerateParameters += CharacterMotor_GenerateParameters;
         }
 
-        private void CharacterBody_onBodyStartGlobal(CharacterBody body)
+        private void CharacterMotor_GenerateParameters(On.RoR2.CharacterMotor.orig_GenerateParameters orig, CharacterMotor self)
         {
-            if (body.name == "TreebotBody(Clone)")
+            orig(self);
+            var body = self.body;
+            if (body && body.bodyIndex == Main.rexBodyIndex)
             {
+                // Main.HRTLogger.LogFatal("found rex body");
                 var kinematicCharacterMotor = body.GetComponent<KinematicCharacterMotor>();
-                kinematicCharacterMotor.MaxStableSlopeAngle = 180f;
+                kinematicCharacterMotor.LedgeAndDenivelationHandling = true;
+                kinematicCharacterMotor.MaxStableSlopeAngle = 89f;
                 kinematicCharacterMotor.MaxStepHeight = 2f;
                 kinematicCharacterMotor.MinRequiredStepDepth = 0f;
-                kinematicCharacterMotor.PreventSnappingOnLedges = true;
                 kinematicCharacterMotor.MaxStableDenivelationAngle = 180f;
             }
         }

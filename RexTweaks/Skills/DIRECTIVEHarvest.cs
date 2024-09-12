@@ -41,13 +41,13 @@ namespace HIFURexTweaks.Skills
             damage = ConfigOption(6f, "Damage", "Decimal. Vanilla is 3.3");
             endlag = ConfigOption(0.3f, "Endlag", "Vanilla is 1");
             cooldown = ConfigOption(6f, "Cooldown", "Vanilla is 6");
-            percentHeal = ConfigOption(0.15f, "Percent Heal", "Decimal. Vanilla is 0.25");
+            percentHeal = ConfigOption(0.12f, "Percent Heal", "Decimal. Vanilla is 0.25");
             giveBuffs = ConfigOption(true, "Should fruit give Buffs?", "Vanilla is false");
             buffDuration = ConfigOption(6f, "Buff Duration", "Vanilla is 0");
             armorBuff = ConfigOption(8f, "Armor Buff", "Vanilla is 0");
             damageBuff = ConfigOption(0.08f, "Damage Buff", "Decimal. Vanilla is 0");
-            attackSpeedBuff = ConfigOption(0.12f, "Attack Speed Buff", "Decimal. Vanilla, is 0");
-            movementSpeedBuff = ConfigOption(0.12f, "Movement Speed Buff", "Decimal. Vanilla is 0");
+            attackSpeedBuff = ConfigOption(0.13f, "Attack Speed Buff", "Decimal. Vanilla, is 0");
+            movementSpeedBuff = ConfigOption(0.13f, "Movement Speed Buff", "Decimal. Vanilla is 0");
 
             uselessBuff = ScriptableObject.CreateInstance<BuffDef>();
             uselessBuff.isHidden = true;

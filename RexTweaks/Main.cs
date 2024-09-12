@@ -4,6 +4,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using R2API;
 using R2API.ContentManagement;
+using RoR2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace HIFURexTweaks
 
         public const string PluginAuthor = "HIFU";
         public const string PluginName = "HIFURexTweaks";
-        public const string PluginVersion = "1.2.8";
+        public const string PluginVersion = "1.3.0";
 
         public static ConfigFile HRTConfig;
         public static ConfigFile HRTBackupConfig;
@@ -33,6 +34,8 @@ namespace HIFURexTweaks
         public static ManualLogSource HRTLogger;
 
         public static bool _preVersioning = false;
+
+        public static BodyIndex rexBodyIndex;
 
         public void Awake()
         {
@@ -51,6 +54,8 @@ namespace HIFURexTweaks
                 ConfigManager.VersionChanged = true;
                 HRTLogger.LogInfo("Config Autosync Enabled.");
             }
+
+            On.RoR2.BodyCatalog.Init += BodyCatalog_Init;
 
             IEnumerable<Type> enumerable = from type in Assembly.GetExecutingAssembly().GetTypes()
                                            where !type.IsAbstract && type.IsSubclassOf(typeof(TweakBase))
@@ -81,6 +86,12 @@ namespace HIFURexTweaks
                     based.Init();
                 }
             }
+        }
+
+        private System.Collections.IEnumerator BodyCatalog_Init(On.RoR2.BodyCatalog.orig_Init orig)
+        {
+            yield return orig();
+            rexBodyIndex = BodyCatalog.FindBodyIndex("TreebotBody(Clone)");
         }
 
         public bool ValidateTweak(TweakBase tb)
